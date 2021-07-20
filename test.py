@@ -1,3 +1,4 @@
+# 프로그래머스 소수찾기
 from itertools import permutations
 def isSosu(N):
     if (N==0 or N==1):
