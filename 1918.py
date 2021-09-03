@@ -1,19 +1,39 @@
 from collections import deque
-shik = input()
-stack = deque()
-answer = ""
-for i in range(len(shik)):
-    if shik[i]==")":
-        # TODO :  pop until "("
-        a = stack.popleft()
-        n1 = ""
-        n2 = ""
-        op = ""
-        while (a=="("):
-            if (a in "+-/*"):
-                op = a
-            else:
-                n1 = a
+sik = input()
+operator = deque()
+operand = deque()
+for i in range(len(sik)):
+    s = sik[i]
+    if s in '+-':
+        if (operator and operator[-1] in "+-*/"):
+            while operator and operator[-1] in "+-*/":
+                o = operand.pop()
+                operand.append(o+operator.pop())
+            operator.append(s)
+        else:
+            operator.append(s)
+    elif s in '*/':
+        if (operator and operator[-1] in "*/"):
+            o = operand.pop()
+            operand.append(o+operator.pop())
+            operator.append(s)
+        else:
+            operator.append(s)
+    elif s=='(':
+        operator.append(s)
+    elif s==')':
+        while operator:
+            o = operator.pop()
+            if o=='(':
+                break
+            a = operand.pop()
+            operand.append(a+o)
     else:
-        stack.append(shik[i])
-        i += 1
+        operand.append(s)
+ans = ''
+while (operand or operator):
+    if operator:
+        ans = ans + operator.pop()
+    if operand:
+        ans = operand.pop() + ans
+print(ans)
