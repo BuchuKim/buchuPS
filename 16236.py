@@ -1,64 +1,54 @@
-N = int(input())
-graph = [] # 수족관
-sharkindex = [0,0] # 상어 위치
-shark = 2 # 상어크기
-ate = 0 # 상어가 먹은 물고기 수
-answer = 0
+import sys;read=sys.stdin.readline
+from collections import deque
+N = int(read())
+
+space = [[] for _ in range(N)]
+current = []
+big = 2
+ate = 0
+ans = 0
+
 for i in range(N):
-    l = list(map(int,input().split()))
-    if (9 in l):
-        sharkindex[0] = i
-        sharkindex[1] = l.index(9)
-        l[sharkindex[1]] = 0
-    graph.append(l)
+    space[i] = list(map(int,read().split()))
+    for j in range(N):
+        if space[i][j]==9:
+            current = [i,j]
 
 def isValid(V):
-    return (0<=V[0]<N and 0<=V[1]<N)
-def findFish(_graph,V):
+    return 0<=V[0]<N and 0<=V[1]<N
+def search(V):
+    global big, ate, ans, space, current
+    # 왼쪽 위부터 탐색하기위한..
+    dx = [-1,0,0,1]
+    dy = [0,-1,1,0]
     visited = [[0 for _ in range(N)] for _ in range(N)]
-    bfsQ = [V]
+    bfsQ = deque()
+    bfsQ.append(V)
     while bfsQ:
-        V = bfsQ.pop(0)
+        V = bfsQ.popleft()
         visited[V[0]][V[1]] = 1
-        # 상 - 좌 - 우 - 하 순으로 탐색
-        if (isValid([V[0]-1,V[1]]) and visited[V[0]-1][V[1]]==0):
-            if (_graph[V[0]-1][V[1]]!= 0 and _graph[V[0]-1][V[1]]<shark):
-                _graph[V[0]-1][V[1]] = 0
-                return [V[0]-1,V[1]]
-            if (_graph[V[0]-1][V[1]]<=shark):
-                bfsQ.append([V[0]-1,V[1]]) # 비었거나, 비지 않았는데 상어보다 크거나.
-        if (isValid([V[0],V[1]-1]) and visited[V[0]][V[1]-1]==0):
-            if (_graph[V[0]][V[1]-1]!=0 and _graph[V[0]][V[1]-1]<shark):
-                _graph[V[0]][V[1]-1] = 0
-                return [V[0],V[1]-1]
-            if (_graph[V[0]][V[1]-1]<=shark):
-                bfsQ.append([V[0],V[1]-1])
-        if (isValid([V[0],V[1]+1]) and visited[V[0]][V[1]+1]==0):
-            if (_graph[V[0]][V[1]+1]!=0 and _graph[V[0]][V[1]+1]<shark):
-                _graph[V[0]][V[1]+1] = 0
-                return [V[0],V[1]+1]
-            if (_graph[V[0]][V[1]+1]<=shark):
-                bfsQ.append([V[0],V[1]+1])
-        if (isValid([V[0]+1,V[1]]) and visited[V[0]+1][V[1]]==0):
-            if (_graph[V[0]+1][V[1]]!=0 and _graph[V[0]+1][V[1]]<shark):
-                _graph[V[0]+1][V[1]] = 0
-                return [V[0]+1,V[1]]
-            if (_graph[V[0]+1][V[1]]<=shark):
-                bfsQ.append([V[0]+1,V[1]])
-    return [-1,-1]
+        for i in range(4):
+            newV = [V[0]+dx[i],V[1]+dy[i]]
+            if (isValid(newV) and visited[newV[0]][newV[1]]==0 and space[newV[0]][newV[1]]<=big):
+                # 이곳으로 이동할 수 있어
+                bfsQ.append(newV)
+                if (0<space[newV[0]][newV[1]]<big):
+                    print(newV)
+                    # 먹을 수 있어 -> 바로 가서 먹어!
+                    ate+=1
+                    space[newV[0]][newV[1]] = 0
+                    ans = ans + abs(newV[0]-current[0]) + abs(newV[1]-current[1])
+                    current[0] = newV[0]
+                    current[1] = newV[1]
+                    if (ate==big):
+                        # 진화!
+                        ate = 0
+                        big += 1
+                    return True
+        
+    # 더이상 먹을 수 있는곳 X
+    return False
 
-while True:
-    fish = findFish(graph,sharkindex)
-    if (fish==[-1,-1]):
-        break
-    print("current shark:",sharkindex)
-    print("fish:",fish)
-    answer += abs(fish[0]-sharkindex[0]) + abs(fish[1]-sharkindex[1])
-    print("now, shark swim",answer)
-    ate += 1
-    if (ate==shark):
-        shark += 1
-        ate = 0
-    sharkindex = fish
-
-print(answer)
+while search(current):
+    continue
+print(ans)

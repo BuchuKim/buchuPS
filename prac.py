@@ -1,30 +1,30 @@
-import sys; read=sys.stdin.readline
-sys.setrecursionlimit(100000)
-N = int(read())
-inorder = list(map(int,read().split()))
-postorder = list(map(int,read().split()))
-tree = {}
-def search2(start,end,pstart,pend):
-    if (end-start==1):
-        return inorder[start]
-    elif (end-start==0):
-        return 0
-    root = postorder[pend-1]
-    tree[root] = [0,0]
-    index = inorder.index(root)
-    step = index - start
-    tree[root][0] = search2(start,start+step,pstart,pstart+step)
-    tree[root][1] = search2(start+step+1,end,pstart+step,pend-1)
-    return root
-search2(0,N,0,N)
-# 프리오더 출력
-def pre(root):
-    print(root,end=' ')
-    if (root not in tree):
-        return
-    if (tree[root][0]!=0):
-        pre(tree[root][0])
-    if (tree[root][1]!=0):
-        pre(tree[root][1])
-pre(postorder[-1])
-print()
+import sys;read=sys.stdin.readline
+from heapq import heappop,heappush
+inf = sys.maxsize
+n,m,x = map(int,read().split())
+graph = [[] for _ in range(n+1)]
+for _ in range(m):
+    s,e,t = map(int,read().split())
+    graph[s].append([e,t])
+def search(v):
+    heap = [[0,v]]
+    dis = [inf for _ in range(n+1)]
+    dis[v] = 0
+    while heap:
+        cost, node = heappop(heap)
+        if (cost>dis[node]):
+            continue
+        for des,descost in graph[node]:
+            if (dis[des]>descost+cost):
+                dis[des] = descost+cost
+                heappush(heap,[dis[des],des])
+    if (v==x):
+        return dis
+    else:
+        return dis[x]
+dis = search(x)
+for i in range(1,n+1):
+    if (i==x):
+        continue
+    dis[i] += search(i)
+print(max(dis[1:]))
