@@ -1,13 +1,14 @@
-import sys;read=sys.stdin.readline
+import sys;read = sys.stdin.readline
+_ = int(read())
+arr = list(map(int, read().split()))
+arr.sort()
 
-N = int(read())
+# target 미만의 숫자는 모두 구성할 수 있다고 가정.
+target = 1
 
-chu = list(map(int,read().split()))
-chu.sort()
-
-can = [0 for _ in range(sum(chu)+1)]
-can[0] = 1
-can[chu[0]] = 1
-for i in range(N):
-    # 현재 저울에 올라간 가장 작은 추가 chu[i]일 때
-    
+for n in arr:
+    # 갑자기 target보다 큰 n이 들어와버리면 -> target~n을 구성할 수 없다!
+    if target < n:
+        break
+    target += n
+print(target)

@@ -1,24 +1,21 @@
-# 프로그래머스 소수찾기
-from itertools import permutations
-def isSosu(N):
-    if (N==0 or N==1):
-        return False
-    for i in range(2,int(N**0.5)+1):
-        if (N%i==0):
-            return False
-    return True
-def solution(numbers):
-    answer = 0
-    cards = []
-    nums = []
-    for i in range(1,len(numbers)+1):
-        cards += list(permutations(list(numbers),i))
-    for i in range(len(cards)):
-        nums.append(int("".join(cards[i])))
-    nums = set(nums)
-    for i in nums:
-        if (isSosu(i)):
-            answer+=1
-    return answer
-
-print(solution("17"))
+import sys;read=sys.stdin.readline
+sys.setrecursionlimit(10000000)
+m,n = map(int,read().split())
+graph = []
+for _ in range(m):
+    graph.append(list(map(int,read().split())))
+dx = [-1,1,0,0]
+dy = [0,0,-1,1]
+def isValid(x,y):
+    return 0<=x<m and 0<=y<n
+def search(x,y,visited):
+    visited[x][y] += 1
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+        if (isValid(nx,ny) and visited[nx][ny]!=-1 and graph[nx][ny]<graph[x][y]):
+            search(nx,ny,visited)
+# visited[i]][j] : 0,0에서 i,j까지 올 수 있는 경우의 수..
+visited = [[-1 for _ in range(n)] for _ in range(m)]
+search(0,0,visited)
+print(visited[-1][-1]+1)
