@@ -14,6 +14,12 @@ def solution(info, query):
     for i in info:
         lang,field,year,food,score = i.split()
         graph[lang][field][year][food].append(int(score))
+
+    for lang in graph:
+        for field in graph[lang]:
+            for year in graph[lang][field]:
+                for food in graph[lang][field][year]:
+                    graph[lang][field][year][food].sort()
     
     for q in query:
         qlang,_,qfield,_,qyear,_,qfood,qscore = q.split()
@@ -29,8 +35,7 @@ def solution(info, query):
                     for food in qfood:
                         scores += graph[lang][field][year][food]
         
-        scores.sort()
-
+        print(scores)
         ans.append(len(scores)-bisect_left(scores,int(qscore)))
 
     return ans

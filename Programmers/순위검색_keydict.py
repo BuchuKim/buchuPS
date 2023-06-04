@@ -7,21 +7,18 @@ def solution(info,query):
     for i in info:
         i = i.split()
         condition,score = i[:-1],int(i[-1])
-        for i in range(5):
-            wild_idx = list(combinations([0,1,2,3],i))
-            for wi in wild_idx:
-                tmp = condition.copy()
-                for idx in wi:
-                    tmp[idx] = "-"
-                key = "".join(tmp)
-                dict[key].append(score)
+        for c1 in (i[0],"-"):
+            for c2 in (i[1],"-"):
+                for c3 in (i[2],"-"):
+                    for c4 in (i[3],"-"):
+                        dict[(c1,c2,c3,c4)].append(score)
     
-    for scores in dict.values():
-        scores.sort()
+    for key in dict:
+        dict[key].sort()
     
     for q in query:
         q = [c for c in q.split(" ") if c!="and"]
-        key = "".join(q[:-1])
+        key = (q[0],q[1],q[2],q[3])
         qscore = int(q[-1])
 
         if (key in dict):
