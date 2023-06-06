@@ -1,5 +1,3 @@
-from collections import deque
-
 def solution(enroll, referral, seller, amount):
     children,money = {p:set() for p in enroll},{p:0 for p in enroll}
     parent = {enroll[i]:referral[i] for i in range(len(enroll))}
