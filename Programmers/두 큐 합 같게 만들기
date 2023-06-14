@@ -23,10 +23,3 @@ def solution(queue1, queue2):
             return count
         count += 1
     return -1
-
-def adding(a:set):
-    a = set([9,8,7])
-
-my_set = set([3,4,5])
-adding(my_set)
-print(my_set)
